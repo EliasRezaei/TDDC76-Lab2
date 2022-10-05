@@ -12,7 +12,7 @@ TEST_CASE ("Constructors and getters")
     SECTION("Default constructor")
     {
         List Empty{};
-        CHECK( Empty.is_empty() == true );
+        CHECK( Empty.is_empty()); // removed == true
         CHECK( Empty.size() == 0 );
     } 
 

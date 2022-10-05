@@ -1,10 +1,17 @@
 #include "List.h"
+
 #include <stdexcept>
 #include <iostream>
+#include <string> // inkluderad string
+
+
+//Komplettering. Kan det användas en datamedleminitieringslista ska det användas.   
+//Komplettering. Inkludera allt som används i filen i fråga.                        --
+//Tips. Ok att använda namespace i cpp/cc-filen.
 
 // empty list
 List::List()
-: m_head{nullptr}, m_tail{0}, m_size{0} 
+: m_head{nullptr}, m_tail{0}, m_size{0}
 {
 
 }
@@ -14,16 +21,11 @@ List::~List()
     erase();
 }
 
-// copy constructor 
+// copy constructor -- deep copy
 List::List(const List& list_to_copy)
+    : m_head{nullptr}, m_tail{nullptr}, m_size{0}
 {
-    if (list_to_copy.is_empty())
-    {
-        m_head = nullptr;
-        m_tail = nullptr;
-        m_size = 0;
-    }
-    else
+    if ( !list_to_copy.is_empty() )
     {
         list_to_copy.m_head->deep_copy(this);
     }
@@ -34,7 +36,7 @@ List::List(const List& list_to_copy)
 // copy assignment operator
 List& List::operator=(const List& rhs_list)
 {
-    // check self assignemnt 
+    // check self assignemnt
     if (this == &rhs_list)
     {
         return *this;
@@ -64,14 +66,12 @@ List::List(List&& list_to_move)
 // Move assignment operator:
 List& List::operator=(List&& rhs_list)
 {
-    //TODO: might not need to check for self assignment:
     if(this == &rhs_list)
         return (*this);
-    else
     {
-        m_head = rhs_list.m_head;
-        m_tail = rhs_list.m_tail;
-        m_size = rhs_list.m_size;
+        this->m_head = rhs_list.m_head;
+        this->m_tail = rhs_list.m_tail;
+        this->m_size = rhs_list.m_size;
 
         rhs_list.m_head = nullptr;
         rhs_list.m_tail = nullptr;
@@ -89,9 +89,9 @@ void List::prepend(int value)
     }
     else
     {
-        Node* temp = new Node{value};
-        temp->m_next = m_head;
-        m_head = temp; 
+        Node* new_node = new Node{value};
+        new_node->m_next = m_head;
+        m_head = new_node;
     }
     m_size++;
 }
@@ -100,10 +100,10 @@ void List::append(int value)
 {
     if (is_empty())
     {
-        m_head = new Node{value}; 
+        m_head = new Node{value};
         m_tail = m_head;
     }
-    else 
+    else
     {
         m_tail->m_next = new Node{value};
         m_tail = m_tail->m_next;
@@ -134,8 +134,7 @@ void List::pop_last()
     }
     else
     {
-        Node* secondToLastNode = m_head->pop_last();  // starts recursion
-        m_tail = secondToLastNode;
+        m_tail = m_head->pop_last();  // starts recursion
     }
 }
 
@@ -157,7 +156,7 @@ List::Node* List::Node::pop_last()
 
 
 bool List::is_empty() const
-{   
+{
     return (m_head == nullptr);
 }
 
@@ -201,7 +200,7 @@ int List::get(int pos) const
     }
     else if (m_size < pos + 1 || pos <0)
     { // TODO: test
-    
+
         throw std::out_of_range ("List does not contain a element at position: " + std::to_string(pos) + " ");
     }
     else
@@ -218,7 +217,7 @@ void List::erase()
         m_head->erase(); // deletes all nodes after the head
         delete m_head;  // deletes m_head
         m_head = nullptr;   // set m_head to nullptr
-        m_size = 0;        
+        m_size = 0;
     }
 }
 
@@ -290,4 +289,3 @@ void List::Node::deep_copy(List* new_list)
         m_next->deep_copy(new_list);
     }
 }
-
